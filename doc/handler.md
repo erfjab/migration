@@ -26,7 +26,7 @@ To install the `migration-without_hashusername` bot, execute the following comma
 4. Set up the db:
 
    ```bash
-   cd /opt/erfjab/migration 
+   cd /opt/erfjab/migration-without_hashusername 
     source venv/bin/activate
    ```
 
