@@ -10,7 +10,7 @@ To install the `migration` bot, execute the following commands:
 
 1. Download and set up the script:
    ```bash
-   sudo bash -c "$(curl -sL https://raw.githubusercontent.com/erfjab/migration/master/install.sh)" @ --install-script
+   sudo bash -c "$(curl -sL https://raw.githubusercontent.com/MatinDehghanian/migration-without_hashusername/master/install.sh)" @ --install-script
    ```
 
 2. Install the bot:
