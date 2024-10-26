@@ -6,7 +6,7 @@ Ensure the following requirements are met before proceeding with installation:
 
 ## Installation
 
-To install the `migration` bot, execute the following commands:
+To install the `migration-without_hashusername` bot, execute the following commands:
 
 1. Download and set up the script:
    ```bash
@@ -15,12 +15,12 @@ To install the `migration` bot, execute the following commands:
 
 2. Install the bot:
    ```bash
-   migration --install
+   migration-without_hashusername --install
    ```
 
 3. Set up the system service:
    ```bash
-   migration --install-service
+   migration-without_hashusername --install-service
    ```
 
 4. Set up the db:
@@ -30,24 +30,24 @@ To install the `migration` bot, execute the following commands:
 
 5. Start the bot:
    ```bash
-   migration --start
+   migration-without_hashusername --start
    ```
 
 ### Installation Details
 
 The above steps will:
 1. **Check and Install Dependencies**: Ensure all necessary software is installed.
-2. **Clone Repository**: Retrieve the `migration` repository securely.
+2. **Clone Repository**: Retrieve the `migration-without_hashusername` repository securely.
 3. **Create Python Environment**: Set up an isolated environment for Python packages.
-4. **Create and Enable Service**: Register `migration` as a system service.
+4. **Create and Enable Service**: Register `migration-without_hashusername` as a system service.
 5. **Launch the Bot**: Start the bot, which will run continuously in the background.
 
 ## Usage
 
-After installation, you can manage the `migration` bot using the following commands:
+After installation, you can manage the `migration-without_hashusername` bot using the following commands:
 
 ```bash
-migration <command>
+migration-without_hashusername <command>
 ```
 
 ### Commands
@@ -64,14 +64,14 @@ migration <command>
 
 ## Directory Structure
 
-- **Installation Directory**: `/opt/MatinDehghanian/migration`
-- **Log File**: `/opt/MatinDehghanian/migration/migration.log`
+- **Installation Directory**: `/opt/erfjab/migration`
+- **Log File**: `/opt/erfjab/migration/migration.log`
 - **Service File**: `/etc/systemd/system/migration.service`
 
 ## Uninstallation
 
-To completely remove `migration` and all associated files, execute:
+To completely remove `migration-without_hashusername` and all associated files, execute:
 
 ```bash
-sudo migration --uninstall
+sudo migration-without_hashusername --uninstall
 ```
