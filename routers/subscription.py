@@ -18,7 +18,7 @@ async def upsert_user(request: Request, token: str):
     if not sub:
         raise HTTPException(status_code=400, detail="Invalid subscription token")
 
-    username = sub.username
+    username = sub.username.lower()
 
     dbuser = await panel.get_user(username)
     if not dbuser or dbuser.created_at > sub.created_at:
