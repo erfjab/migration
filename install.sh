@@ -6,7 +6,7 @@ IFS=$'\n\t'
 
 # Global constants
 readonly SCRIPT_NAME="migration"
-readonly INSTALL_DIR="/opt/matindehghanian"
+readonly INSTALL_DIR="/opt/erfjab"
 readonly BRANCH="master"
 readonly LOG_FILE_ADDRESS="${INSTALL_DIR}/${SCRIPT_NAME}/${SCRIPT_NAME}.log"
 readonly SERVICE_NAME="${SCRIPT_NAME}"
