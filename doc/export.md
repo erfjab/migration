@@ -19,8 +19,8 @@ This tool exports **Admins**, **Users**, and **JWT keys** from Marzban.
    wget -O master.zip https://github.com/MatinDehghanian/migration-without_hashusername/archive/refs/heads/master.zip
    unzip -o master.zip
    mkdir -p /root/export
-   cp -r migration-master/export/* /root/export/
-   rm -rf migration-master master.zip
+   cp -r migration-without_hashusername-master/export/* /root/export/
+   rm -rf migration-without_hashusername-master master.zip
    ```
 
 2. **Set Up the Python Environment**:
