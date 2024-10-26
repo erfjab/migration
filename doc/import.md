@@ -19,8 +19,8 @@ Ensure prerequisites are installed as in Step 1.
    wget -O master.zip https://github.com/MatinDehghanian/migration-without_hashusername/archive/refs/heads/master.zip
    unzip -o master.zip
    mkdir -p /root/import
-   cp -r migration-master/import/* /root/import/
-   rm -rf migration-master master.zip
+   cp -r migration-without_hashusername-master/import/* /root/import/
+   rm -rf migration-without_hashusername-master master.zip
    ```
 
 ### Configure Marzneshin
