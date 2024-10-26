@@ -64,8 +64,8 @@ migration <command>
 
 ## Directory Structure
 
-- **Installation Directory**: `/opt/erfjab/migration`
-- **Log File**: `/opt/erfjab/migration/migration.log`
+- **Installation Directory**: `/opt/MatinDehghanian/migration`
+- **Log File**: `/opt/MatinDehghanian/migration/migration.log`
 - **Service File**: `/etc/systemd/system/migration.service`
 
 ## Uninstallation
