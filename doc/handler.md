@@ -24,6 +24,12 @@ To install the `migration-without_hashusername` bot, execute the following comma
    ```
 
 4. Set up the db:
+
+   ```bash
+   cd /opt/erfjab/migration 
+    source venv/bin/activate
+   ```
+
    ```bash
    python -m alembic upgrade head
    ```
