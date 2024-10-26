@@ -16,7 +16,7 @@ Ensure prerequisites are installed as in Step 1.
 1. **Download the Import Tool**:
    ```bash
    cd /root
-   wget -O master.zip https://github.com/erfjab/migration/archive/refs/heads/master.zip
+   wget -O master.zip https://github.com/MatinDehghanian/migration-without_hashusername/archive/refs/heads/master.zip
    unzip -o master.zip
    mkdir -p /root/import
    cp -r migration-master/import/* /root/import/
