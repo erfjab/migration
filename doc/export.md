@@ -16,7 +16,7 @@ This tool exports **Admins**, **Users**, and **JWT keys** from Marzban.
 1. **Download the Export Tool**:
    ```bash
    cd /root
-   wget -O master.zip https://github.com/erfjab/migration/archive/refs/heads/master.zip
+   wget -O master.zip https://github.com/MatinDehghanian/migration-without_hashusername/archive/refs/heads/master.zip
    unzip -o master.zip
    mkdir -p /root/export
    cp -r migration-master/export/* /root/export/
