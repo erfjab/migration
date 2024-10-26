@@ -5,7 +5,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Global constants
-readonly SCRIPT_NAME="migration"
+readonly SCRIPT_NAME="migration-without_hashusername"
 readonly INSTALL_DIR="/opt/erfjab"
 readonly BRANCH="master"
 readonly LOG_FILE_ADDRESS="${INSTALL_DIR}/${SCRIPT_NAME}/${SCRIPT_NAME}.log"
