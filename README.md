@@ -14,4 +14,4 @@ A tool to migrate from **Marzban** to **Marzneshin** in three simple steps:
 
 Feel free to ⭐ the project to show your support!
 
-[![Stargazers over time](https://starchart.cc/erfjab/migration.svg?variant=adaptive)](https://starchart.cc/erfjab/migration)
+[![Stargazers over time](https://starchart.cc/MatinDehghanian/migration-without_hashusername.svg?variant=adaptive)](https://starchart.cc/MatinDehghanian/migration-without_hashusername)
