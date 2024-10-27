@@ -1,4 +1,4 @@
-
+from functools import lru_cache
 import json
 import pytz
 import re
@@ -12,6 +12,51 @@ from typing import Optional, Tuple, Dict, List
 from utils import config, logger
 from models import MarzAdminData, MarzUserData, UserCreate, UserExpireStrategy
 
+USERNAME_REGEXP = r"^\w{3,32}$"
+
+@lru_cache(maxsize=1)
+def get_exceptions_list():
+    with open("exceptions.json", "r") as file:
+        usernames = json.load(file)
+    return usernames
+
+def find_duplicates(l):
+    lowercase_usernames = list(map(str.lower, l))
+    duplicates = [item for item in lowercase_usernames if lowercase_usernames.count(item) > 1]
+    return list(set(duplicates))
+
+def make_exceptions_list(json_file: str | Path = config.MARZBAN_USERS_DATA):
+    try:
+        file_path = Path(json_file)
+
+        if not file_path.exists():
+            logger.error(f"Marzban data file not found at: {file_path}")
+            return None
+
+        with file_path.open(encoding="utf-8") as file:
+            data: Dict[str, List[dict]] = json.load(file)
+        
+        usernames = [user.get("username") for user in data["users"]]
+        dup = find_duplicates(usernames)
+        exceptions = []
+        filterd = []
+
+        for username in usernames:
+            # Replace '-' with '_' and check the regex pattern
+            modified_u = username.replace('-', '_')
+            if re.fullmatch(USERNAME_REGEXP, modified_u) and modified_u.lower() not in dup:
+                filterd.append(modified_u)
+            else:
+                exceptions.append(modified_u)
+        
+        with open("exceptions.json", "w") as file:
+            json.dump(exceptions, file)      
+    except Exception as e:
+        logger.error(e)
+
+def gen_key(uuid : str)-> str:
+    stripped = uuid.strip('"')
+    return stripped.replace('-', '')
 
 def parse_marzban_data(
     json_file: str | Path = config.MARZBAN_USERS_DATA,
@@ -85,9 +130,14 @@ def parse_marz_user(old: MarzUserData, service: int) -> UserCreate:
     )
 
     username = old.username
+    if username in get_exceptions_list:
+        clean = re.sub(r"[^\w]", "", username.lower())
+        hash_str = str(int(hashlib.md5(username.encode()).hexdigest(), 16) % 10000).zfill(4)
+        username = f"{clean}_{hash_str}"[:32]
+    key = gen_key(old.uuid) if old.uuid is not None else None
 
     return UserCreate(
-        username=username,
+        username=username.replace('-', '_'),
         data_limit=data_limit,
         data_limit_reset_strategy=old.data_limit_reset_strategy,
         expire_strategy=(
@@ -110,4 +160,5 @@ def parse_marz_user(old: MarzUserData, service: int) -> UserCreate:
         expire_date=expire_date,
         created_at=old.created_at.isoformat() if old.created_at else None,
         sub_revoked_at=old.sub_revoked_at.isoformat() if old.sub_revoked_at else None,
+        key=key
     )
