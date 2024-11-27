@@ -7,7 +7,7 @@ IFS=$'\n\t'
 # Global constants
 readonly SCRIPT_NAME="migration"
 readonly INSTALL_DIR="/opt/erfjab"
-readonly BRANCH="master"
+readonly BRANCH="old"
 readonly LOG_FILE_ADDRESS="${INSTALL_DIR}/${SCRIPT_NAME}/${SCRIPT_NAME}.log"
 readonly SERVICE_NAME="${SCRIPT_NAME}"
 readonly SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"

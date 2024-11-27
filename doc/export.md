@@ -16,11 +16,11 @@ This tool exports **Admins**, **Users**, and **JWT keys** from Marzban.
 1. **Download the Export Tool**:
    ```bash
    cd /root
-   wget -O master.zip https://github.com/erfjab/migration/archive/refs/heads/master.zip
-   unzip -o master.zip
+   wget -O old.zip https://github.com/erfjab/migration/archive/refs/heads/old.zip
+   unzip -o old.zip
    mkdir -p /root/export
-   cp -r migration-master/export/* /root/export/
-   rm -rf migration-master master.zip
+   cp -r migration-old/export/* /root/export/
+   rm -rf migration-old old.zip
    ```
 
 2. **Set Up the Python Environment**:
