@@ -27,7 +27,9 @@ P2 = "VMess"
 def get_protocol_type() -> None:
     """Prompt the user to select the protocol type."""
     while True:
-        print("Select which protocol UUID you want to transfer!\n If the user doesn't have a UUID for VLESS, then a VMess UUID will be used. If there is nothing at all, then the UUID will be null.")
+        print(
+            "Select which protocol UUID you want to transfer!\n If the user doesn't have a UUID for VLESS, then a VMess UUID will be used. If there is nothing at all, then the UUID will be null."
+        )
         type = int(input("\n1) VLESS\n2) VMess \n\nEnter protocol type number: "))
         match type:
             case 1:
@@ -38,6 +40,7 @@ def get_protocol_type() -> None:
                 return "VMess"
             case _:
                 logging.error("Invalid input. Please enter 1 or 2.")
+
 
 def get_database_type() -> str:
     """Prompt the user to select the database type."""
