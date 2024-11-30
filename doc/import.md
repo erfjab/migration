@@ -31,7 +31,7 @@ Edit the Marzneshin Docker configuration to include these volumes:
 nano /etc/opt/marzneshin/docker-compose.yml
 ```
 
-**for v0.6.0:**
+**from v0.6.0 to v0.6.2:**
 
 ```yaml
     volumes:
