@@ -8,4 +8,6 @@ except ValueError as e:
     logger.error(f"Configuration error: {str(e)}")
     raise
 
-from .panel import MarzneshinClient
+from .panel import MarzneshinClient  # noqa: E402
+
+__all__ = ["MarzneshinClient"]

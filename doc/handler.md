@@ -10,27 +10,22 @@ To install the `migration` bot, execute the following commands:
 
 1. Download and set up the script:
    ```bash
-   sudo bash -c "$(curl -sL https://raw.githubusercontent.com/erfjab/migration/master/install.sh)" @ --install-script
+   sudo bash -c "$(curl -sL https://raw.githubusercontent.com/erfjab/migration/master/install.sh)" @ install-script
    ```
 
 2. Install the bot:
    ```bash
-   migration --install
+   migration install
    ```
 
 3. Set up the system service:
    ```bash
-   migration --install-service
+   migration install-service
    ```
 
-4. Set up the db:
+4. Start the handler:
    ```bash
-   python -m alembic upgrade head
-   ```
-
-5. Start the bot:
-   ```bash
-   migration --start
+   migration start
    ```
 
 ### Installation Details
@@ -52,15 +47,15 @@ migration <command>
 
 ### Commands
 
-- `--install`: Set up the bot, including dependencies and initial configuration.
-- `--start`: Start the bot service.
-- `--stop`: Stop the bot service.
-- `--restart`: Restart the bot service.
-- `--status`: Check the current status of the bot service.
-- `--logs`: View the bot’s logs in real time.
-- `--update`: Pull the latest changes from the repository and apply updates.
-- `--uninstall`: Fully remove the bot and all related files.
-- `--help`: Display a help message with all available commands.
+- `install`: Set up the bot, including dependencies and initial configuration.
+- `start`: Start the bot service.
+- `stop`: Stop the bot service.
+- `restart`: Restart the bot service.
+- `status`: Check the current status of the bot service.
+- `logs`: View the bot’s logs in real time.
+- `update`: Pull the latest changes from the repository and apply updates.
+- `uninstall`: Fully remove the bot and all related files.
+- `help`: Display a help message with all available commands.
 
 ## Directory Structure
 
@@ -73,5 +68,5 @@ migration <command>
 To completely remove `migration` and all associated files, execute:
 
 ```bash
-sudo migration --uninstall
+sudo migration uninstall
 ```

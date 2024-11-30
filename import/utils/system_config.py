@@ -47,6 +47,7 @@ class SystemConfig:
             MARZBAN_USERS_DATA=config(
                 "MARZBAN_USERS_DATA", default="marzban.json", cast=str
             ),
+            USERNAME_SUFFIX=config("USERNAME_SUFFIX", default=2, cast=int)
         )
 
     @staticmethod

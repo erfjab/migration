@@ -132,7 +132,7 @@ def get_node_users(
         .join(Inbound.services)
         .join(Service.users)
         .filter(Inbound.node_id == node_id)
-        .filter(User.activated == True)
+        .filter(User.activated is True)
     )
     return query.all()
 
@@ -248,7 +248,7 @@ def get_users(
     data_limit_reached: bool | None = None,
     enabled: bool | None = None,
 ) -> Union[List[User], Tuple[List[User], int]]:
-    query = db.query(User).filter(User.removed == False)
+    query = db.query(User).filter(User.removed is False)
 
     if usernames:
         if len(usernames) == 1:
@@ -440,7 +440,7 @@ def get_users_count(
     expired: bool | None = None,
     data_limit_reached: bool | None = None,
 ):
-    query = db.query(User.id).filter(User.removed == False)
+    query = db.query(User.id).filter(User.removed is False)
     if admin:
         query = query.filter(User.admin_id == admin.id)
     if is_active:
