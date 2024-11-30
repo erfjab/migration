@@ -49,3 +49,4 @@ MARZBAN_JWT_TOKEN = config("MARZBAN_JWT_TOKEN", default="", cast=str)
 MARZBAN_XRAY_SUBSCRIPTION_PATH = config(
     "MARZBAN_XRAY_SUBSCRIPTION_PATH", default="", cast=str
 )
+USERNAME_SUFFIX = config("USERNAME_SUFFIX", default=2, cast=int)

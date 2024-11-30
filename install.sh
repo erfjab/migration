@@ -8,11 +8,14 @@ IFS=$'\n\t'
 readonly SCRIPT_NAME="migration"
 readonly INSTALL_DIR="/opt/erfjab"
 readonly BRANCH="master"
+readonly USERNAME="erfjab"
+
+readonly SERVICE_FILE="/etc/systemd/system/${SCRIPT_NAME}.service"
+readonly SERVICE_NAME="${SCRIPT_NAME}.service"
+readonly REPO_URL="https://github.com/${USERNAME}/${SCRIPT_NAME}.git"
+readonly SCRIPT_URL="https://raw.githubusercontent.com/${USERNAME}/${SCRIPT_NAME}/${BRANCH}/install.sh"
 readonly LOG_FILE_ADDRESS="${INSTALL_DIR}/${SCRIPT_NAME}/${SCRIPT_NAME}.log"
-readonly SERVICE_NAME="${SCRIPT_NAME}"
-readonly SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
-readonly REPO_URL="https://github.com/erfjab/${SCRIPT_NAME}.git"
-readonly SCRIPT_URL="https://raw.githubusercontent.com/erfjab/${SCRIPT_NAME}/${BRANCH}/install.sh"
+readonly ENV_FILE="$INSTALL_DIR/$SCRIPT_NAME/.env"
 
 # ANSI color codes
 declare -r -A COLORS=(
@@ -23,16 +26,6 @@ declare -r -A COLORS=(
     [RESET]='\033[0m'
 )
 
-# Dependency check
-declare -a DEPENDENCIES=(
-    "git"
-    "curl"
-    "python3"
-    "python3-pip"
-    "python3-venv"
-    "lsb-release"
-    "systemctl"
-)
 
 # Logging functions
 log() { printf "${COLORS[BLUE]}[INFO]${COLORS[RESET]} %s\n" "$*"; }
@@ -48,19 +41,27 @@ check_root() {
     [[ $EUID -eq 0 ]] || error "This script must be run as root"
 }
 
+# Dependency check
+declare -a DEPENDENCIES=(
+    "git"
+    "python3"
+    "python3-pip"
+    "python3-venv"
+    "systemctl"
+)
+
+declare -a PIP_DEPENDENCIES=(
+    "uv"
+)
+
 # Check for missing dependencies and install them
-check_dependencies() {
+check_system_dependencies() {
     local missing_deps=()
     for dep in "${DEPENDENCIES[@]}"; do
         if ! command -v "$dep" &>/dev/null; then
             missing_deps+=("$dep")
         fi
     done
-
-    # Ensure script runs on Ubuntu
-    if [[ "$(lsb_release -si)" != "Ubuntu" ]]; then
-        error "This script is designed for Ubuntu only."
-    fi
 
     # Update package lists and install missing dependencies
     if [[ ${#missing_deps[@]} -gt 0 ]]; then
@@ -71,11 +72,28 @@ check_dependencies() {
     fi
 }
 
+# Check for missing pip dependencies and install them
+check_pip_dependencies() {
+    for package in "${PIP_DEPENDENCIES[@]}"; do
+        if ! python3 -c "import $package" &>/dev/null; then
+            log "Installing missing pip dependency: $package"
+            pip3 install "$package" || error "Failed to install pip dependency: $package"
+        else
+            success "Pip dependency $package is already installed."
+        fi
+    done
+}
+
+# Run checks
+check_dependencies() {
+    check_system_dependencies
+    check_pip_dependencies
+}
+
 check_and_setup_env() {
-    local env_file="$INSTALL_DIR/$SCRIPT_NAME/.env"
-    if [[ ! -f "$env_file" ]]; then
-        cp $INSTALL_DIR/$SCRIPT_NAME/.env.example $env_file
-        nano $env_file
+    if [[ ! -f "$ENV_FILE" ]]; then
+        cp $INSTALL_DIR/$SCRIPT_NAME/.env.example $ENV_FILE
+        nano $ENV_FILE
     else
         log ".env file already exists."
     fi
@@ -86,8 +104,9 @@ is_installed() {
 }
 
 is_running() {
-    systemctl is-active --quiet "$SERVICE_NAME"
+    systemctl is-active --quiet "$SERVICE_NAME" || return 1
 }
+
 
 create_directories() {
     local target_dir="$INSTALL_DIR/$SCRIPT_NAME"
@@ -116,17 +135,17 @@ create_directories() {
     success "Installation directory created successfully at $target_dir"
 }
 
-setup_venv() {
-    log "Setting up virtual environment..."
-    python3 -m venv "$INSTALL_DIR/$SCRIPT_NAME/venv"
-    source "$INSTALL_DIR/$SCRIPT_NAME/venv/bin/activate"
-    pip install --upgrade pip
-    [[ -f "$INSTALL_DIR/$SCRIPT_NAME/requirements.txt" ]] && pip install -r "$INSTALL_DIR/$SCRIPT_NAME/requirements.txt" || error "Requirements file not found"
-    success "Virtual environment set up successfully"
-}
-
 create_service() {
     log "Creating systemd service..."
+
+    if [ -f "$SERVICE_FILE" ]; then
+        log "Existing service found. Removing it..."
+        systemctl stop "$SERVICE_NAME"
+        systemctl disable "$SERVICE_NAME"
+        rm -f "$SERVICE_FILE"
+        log "Old service removed."
+    fi
+
     cat > "$SERVICE_FILE" <<EOF
 [Unit]
 Description=$SCRIPT_NAME Service
@@ -136,7 +155,9 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=$INSTALL_DIR/$SCRIPT_NAME
-ExecStart=$INSTALL_DIR/$SCRIPT_NAME/venv/bin/python $INSTALL_DIR/$SCRIPT_NAME/main.py
+ExecStartPre=uv sync
+ExecStartPre=uv run alembic upgrade head
+ExecStart=uv run main.py
 Restart=always
 RestartSec=3
 StandardOutput=append:$LOG_FILE_ADDRESS
@@ -150,6 +171,7 @@ EOF
     systemctl enable "$SERVICE_NAME"
     success "Systemd service created and enabled"
 }
+
 
 clone_repo() {
     log "Cloning repository..."
@@ -243,7 +265,6 @@ update_bot() {
     log "Updating $SCRIPT_NAME..."
     manage_service "stop"
     update_repo
-    setup_venv
     check_and_setup_env
     manage_service "start"
     success "$SCRIPT_NAME updated successfully"
@@ -260,7 +281,7 @@ install_script() {
         log "Installing $SCRIPT_NAME script in $install_dir..."
     fi
     
-    curl -sL "$SCRIPT_URL" -o "$script_path" || error "Failed to download the script"
+    curl -L "$SCRIPT_URL" -o "$script_path" || error "Failed to download the script"
     chmod +x "$script_path" || error "Failed to set execute permissions on the script"
     success "$SCRIPT_NAME script installed/updated successfully in $install_dir."
 }
@@ -289,24 +310,24 @@ print_help() {
 Usage: $SCRIPT_NAME <command>
 
 Commands:
-  --install-script   Install/Update the script in /usr/local/bin
-  --install          Install and set up the handler
-  --start            Start the handler service
-  --stop             Stop the handler service
-  --restart          Restart the handler service
-  --status           Show the status of the handler service
-  --logs             Show the handler logs
-  --update           Update the handler from the repository
-  --update-script    Update the script itself
-  --uninstall-script Uninstall the script from /usr/local/bin
-  --uninstall        Uninstall the handler and remove all files
-  --help             Show this help message
+  install-script   Install/Update the script in /usr/local/bin
+  install          Install and set up the handler
+  start            Start the handler service
+  stop             Stop the handler service
+  restart          Restart the handler service
+  status           Show the status of the handler service
+  logs             Show the handler logs
+  update           Update the handler from the repository
+  update-script    Update the script itself
+  uninstall-script Uninstall the script from /usr/local/bin
+  uninstall        Uninstall the handler and remove all files
+  help             Show this help message
 
 Examples:
-  $SCRIPT_NAME --install-script
-  $SCRIPT_NAME --install
-  $SCRIPT_NAME --start
-  $SCRIPT_NAME --update
+  $SCRIPT_NAME install-script
+  $SCRIPT_NAME install
+  $SCRIPT_NAME start
+  $SCRIPT_NAME update
 
 EOF
 }
@@ -321,51 +342,59 @@ main() {
 
     while [ $# -gt 0 ]; do
         case "$1" in
-            --install-script)
+            install-script)
                 check_dependencies
                 install_script
                 ;;
-            --uninstall-script)
+            uninstall-script)
                 uninstall_script
                 ;;
-            --install)
+            install)
                 if is_installed; then
                     error "$SCRIPT_NAME is installed. Please uninstall it first."
                 fi
                 check_dependencies
                 create_directories
                 clone_repo
-                setup_venv
                 check_and_setup_env
                 ;;
-            --install-service)
+            install-service)
+                if is_installed; then
+                    error "$SCRIPT_NAME is installed. Please uninstall it first."
+                fi
                 create_service
                 ;;
-            --start)
+            start)
                 manage_service "start"
-                ;;
-            --stop)
-                manage_service "stop"
-                ;;
-            --restart)
-                manage_service "restart"
-                ;;
-            --status)
-                show_status
-                ;;
-            --logs)
                 show_logs
                 ;;
-            --update)
-                update_bot
+            stop)
+                manage_service "stop"
                 ;;
-            --update-script)
+            restart)
+                manage_service "restart"
+                show_logs
+                ;;
+            status)
+                show_status
+                ;;
+            logs)
+                show_logs
+                ;;
+            env)
+                nano $ENV_FILE
+                ;;
+            update)
+                update_bot
+                show_logs
+                ;;
+            update-script)
                 update_script
                 ;;
-            --uninstall)
+            uninstall)
                 uninstall_bot
                 ;;
-            --help)
+            help)
                 print_help
                 ;;
             *)

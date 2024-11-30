@@ -1,7 +1,7 @@
 from base64 import b64decode, b64encode
 from datetime import datetime
 from hashlib import sha256
-from typing import Union, Dict
+from typing import Union
 from utils.config import MARZBAN_JWT_TOKEN
 from jose import JWTError, jwt
 from models import MarzbanToken
@@ -32,7 +32,7 @@ def get_subscription_payload(
                     altchars=b"-_",
                     validate=True,
                 ).decode("utf-8")
-            except:
+            except:  # noqa: E722
                 return None
 
             u_token_resign = b64encode(
