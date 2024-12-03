@@ -1,4 +1,4 @@
-نخ#!/bin/bash
+#!/bin/bash
 
 # Strict mode
 set -euo pipefail
