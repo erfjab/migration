@@ -77,7 +77,7 @@ check_pip_dependencies() {
     for package in "${PIP_DEPENDENCIES[@]}"; do
         if ! python3 -c "import $package" &>/dev/null; then
             log "Installing missing pip dependency: $package"
-            pip3 install "$package" || error "Failed to install pip dependency: $package"
+            pip3 install "$package" --break-system-packages || error "Failed to install pip dependency: $package"
         else
             success "Pip dependency $package is already installed."
         fi
