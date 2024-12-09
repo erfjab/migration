@@ -139,4 +139,5 @@ async def main():
 
 
 if __name__ == "__main__":
+    helpers.make_exceptions_list("marzban.json")
     asyncio.run(main())

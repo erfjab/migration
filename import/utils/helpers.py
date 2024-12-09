@@ -3,6 +3,7 @@ import pytz
 import re
 import hashlib
 
+from functools import lru_cache
 from pathlib import Path
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -11,6 +12,52 @@ from typing import Optional, Tuple, Dict, List
 from utils import config, logger
 from models import MarzAdminData, MarzUserData, UserCreate, UserExpireStrategy
 
+SERNAME_REGEXP = r"^\w{3,32}$"
+
+@lru_cache(maxsize=1)
+def get_exceptions_list():
+    with open("exceptions.json", "r") as file:
+        usernames = json.load(file)
+    return usernames
+
+def find_duplicates(l):
+    lowercase_usernames = list(map(str.lower, l))
+    duplicates = [item for item in lowercase_usernames if lowercase_usernames.count(item) > 1]
+    return list(set(duplicates))
+
+def make_exceptions_list(json_file: str | Path = config.MARZBAN_USERS_DATA):
+    try:
+        file_path = Path(json_file)
+
+        if not file_path.exists():
+            logger.error(f"Marzban data file not found at: {file_path}")
+            return None
+
+        with file_path.open(encoding="utf-8") as file:
+            data: Dict[str, List[dict]] = json.load(file)
+
+        usernames = [user.get("username") for user in data["users"]]
+        dup = find_duplicates(usernames)
+        exceptions = []
+
+        for username in usernames:
+            # Replace '-' with '_' and check the regex pattern
+            modified_u = username.replace('-', '_')
+            is_valid_format = re.fullmatch(USERNAME_REGEXP, modified_u)
+            is_not_duplicate = username.lower() not in dup
+            is_unique_or_same = modified_u not in usernames if modified_u != username else True
+            if not (is_valid_format and is_not_duplicate and is_unique_or_same):
+                exceptions.append(username)
+
+
+        with open("exceptions.json", "w") as file:
+            json.dump(exceptions, file)      
+    except Exception as e:
+        logger.error(e)
+
+def gen_key(uuid : str)-> str:
+    stripped = uuid.strip('"')
+    return stripped.replace('-', '')
 
 def parse_marzban_data(
     json_file: str | Path = config.MARZBAN_USERS_DATA,
@@ -85,9 +132,14 @@ def parse_marz_user(old: MarzUserData, service: int) -> UserCreate:
     )
 
     username = old.username
-    clean = re.sub(r"[^\w]", "", username.lower())
-    hash_str = str(int(hashlib.md5(username.encode()).hexdigest(), 16) % (10 ** config.USERNAME_SUFFIX)).zfill(config.USERNAME_SUFFIX)
-    username = f"{clean}_{hash_str}"[:32]
+    if username in get_exceptions_list():
+        clean = re.sub(r"[^\w]", "", username.lower())
+        hash_str = str(int(hashlib.md5(username.encode()).hexdigest(), 16) % 10000).zfill(4)
+        username = f"{clean}_{hash_str}"[:32]
+    else:
+        username = (username.lower()).replace('-', '_')
+
+    key = gen_key(old.uuid) if old.uuid is not None else None
 
     return UserCreate(
         username=username,
@@ -113,4 +165,5 @@ def parse_marz_user(old: MarzUserData, service: int) -> UserCreate:
         expire_date=expire_date,
         created_at=old.created_at.isoformat() if old.created_at else None,
         sub_revoked_at=old.sub_revoked_at.isoformat() if old.sub_revoked_at else None,
+        key=key
     )

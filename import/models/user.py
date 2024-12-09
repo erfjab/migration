@@ -1,7 +1,13 @@
+import secrets
+from pydantic import BaseModel,Field,field_validator
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 from enum import Enum
+
+class ProxyType(str, Enum):
+    VLESS = 'VLESS'
+    VMess = 'VMess'
 
 
 class UserDataUsageResetStrategy(str, Enum):
@@ -30,7 +36,11 @@ class UserCreate(BaseModel):
     username: str
     sub_revoked_at: Optional[str]
     created_at: str
+    key:str = Field(default_factory=lambda: secrets.token_hex(16))
 
+    @field_validator('key', mode='before')
+    def set_default_if_none(cls, value):
+        return value or secrets.token_hex(16)
 
 class UserData(BaseModel):
     id: int
@@ -58,7 +68,9 @@ class UserData(BaseModel):
     subscription_url: str
     owner_username: Optional[str]
     traffic_reset_at: Optional[datetime]
-
+    last_status_change: Optional[datetime]
+    uuid : str
+    proxy_type: ProxyType
 
 class MarzUserData(BaseModel):
     id: int
