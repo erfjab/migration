@@ -18,9 +18,12 @@ async def upsert_user(request: Request, token: str):
         raise HTTPException(status_code=400, detail="Invalid subscription token")
 
     username = sub.username
-    clean = re.sub(r"[^\w]", "", username.lower())
-    hash_str = str(int(hashlib.md5(username.encode()).hexdigest(), 16) % (10 ** USERNAME_SUFFIX)).zfill(USERNAME_SUFFIX)
-    username = f"{clean}_{hash_str}"[:32]
+    if username in panel.get_exceptions_list():
+        clean = re.sub(r"[^\w]", "", username.lower())
+        hash_str = str(int(hashlib.md5(username.encode()).hexdigest(), 16) % 10000).zfill(4)
+        username = f"{clean}_{hash_str}"[:32]
+    else:
+        username = (username.lower()).replace('-', '_')
 
     dbuser = await panel.get_user(username)
     if not dbuser or dbuser.created_at > sub.created_at:
