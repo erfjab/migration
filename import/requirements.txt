@@ -1,4 +1,0 @@
-python-decouple==3.8
-pydantic==2.8.2
-httpx==0.27.0
-pytz==2024.1
