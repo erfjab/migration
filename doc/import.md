@@ -16,11 +16,11 @@ Ensure prerequisites are installed as in Step 1.
 1. **Download the Import Tool**:
    ```bash
    cd /root
-   wget -O master.zip https://github.com/erfjab/migration/archive/refs/heads/master.zip
-   unzip -o master.zip
+   wget -O new.zip https://github.com/erfjab/migration/archive/refs/heads/new.zip
+   unzip -o new.zip
    mkdir -p /root/import
-   cp -r migration-master/import/* /root/import/
-   rm -rf migration-master master.zip
+   cp -r migration-new/import/* /root/import/
+   rm -rf migration-new new.zip
    ```
 
 ### Configure Marzneshin
