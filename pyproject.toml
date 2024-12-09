@@ -1,0 +1,7 @@
+[project]
+name = "migration"
+version = "0.1.0"
+description = "A tool to migrate from Marzban to Marzneshin in three simple steps"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
