@@ -19,6 +19,24 @@ SQLITE_PATH = "/var/lib/marzban/db.sqlite3"
 TABLES = ["users", "jwt", "admins"]
 OUTPUT_FILE = "marzban.json"
 MAX_ATTEMPTS = 3
+P1 = "VLESS"
+P2 = "VMess"
+
+
+def get_protocol_type() -> None:
+    """Prompt the user to select the protocol type."""
+    while True:
+        print("Select which protocol UUID you want to transfer!\n If the user doesn't have a UUID for VLESS, then a VMess UUID will be used. If there is nothing at all, then the UUID will be null.")
+        type = int(input("\n1) VLESS\n2) VMess \n\nEnter protocol type number: "))
+        match type:
+            case 1:
+                print(f"Selected protocol: VLESS")
+                return "VLESS"
+            case 2:
+                print(f"Selected protocol: VMess")
+                return "VMess"
+            case _:
+                logging.error("Invalid input. Please enter 1 or 2.")
 
 
 def get_database_type() -> str:
@@ -69,7 +87,12 @@ def fetch_table_data(
 ) -> List[Dict[str, Any]]:
     """Fetch data from a specific table."""
     try:
-        cursor.execute(f"SELECT * FROM {table_name}")
+        if table_name == "users":
+            cursor.execute(
+                f"SELECT users.*, COALESCE( JSON_EXTRACT(T1.settings, '$.id'), JSON_EXTRACT(T2.settings, '$.id') ) AS uuid, CASE WHEN JSON_EXTRACT(T1.settings, '$.id') IS NOT NULL THEN '{P1}' WHEN JSON_EXTRACT(T2.settings, '$.id') IS NOT NULL THEN '{P2}' ELSE NULL END AS proxy_type FROM users LEFT JOIN proxies AS T1 ON users.id = T1.user_id AND T1.type = '{P1}' LEFT JOIN proxies AS T2 ON users.id = T2.user_id AND T2.type = '{P2}';"
+            )
+        else:
+            cursor.execute(f"SELECT * FROM {table_name}")
         columns = [desc[0] for desc in cursor.description]
         return [dict(zip(columns, row)) for row in cursor.fetchall()]
     except (pymysql.Error, sqlite3.Error) as e:
@@ -110,7 +133,12 @@ def main():
     db_type = get_database_type()
     password = get_and_verify_mysql_password() if db_type == "mysql" else None
     database_data = {}
-
+    
+    global P1
+    P1 = get_protocol_type()
+    global P2
+    P2 = "VMess" if P1 == "VLESS" else "VLESS"
+    
     with closing(get_database_connection(db_type, password)) as connection:
         cursor = connection.cursor()
         for table in TABLES:
