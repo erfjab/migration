@@ -12,7 +12,7 @@ from typing import Optional, Tuple, Dict, List
 from utils import config, logger
 from models import MarzAdminData, MarzUserData, UserCreate, UserExpireStrategy
 
-SERNAME_REGEXP = r"^\w{3,32}$"
+USERNAME_REGEXP = r"^\w{3,32}$"
 
 @lru_cache(maxsize=1)
 def get_exceptions_list():
