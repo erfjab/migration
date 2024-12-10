@@ -35,9 +35,7 @@ class UserExpireStrategy(str, Enum):
 
 class User(BaseModel):
     id: int | None = None
-    username: Annotated[
-        str, StringConstraints(to_lower=True, pattern=USERNAME_REGEXP)
-    ]
+    username: Annotated[str, StringConstraints(to_lower=True, pattern=USERNAME_REGEXP)]
     expire_strategy: UserExpireStrategy
     expire_date: datetime | None = Field(None)
     usage_duration: int | None = Field(None)

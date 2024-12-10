@@ -24,7 +24,7 @@ pip install uv
 3. **Download the Import Tool**:
 
 ```bash
-cd && git clone https://github.com/erfjab/migration.git && cd migration && git checkout ref
+cd && git clone https://github.com/erfjab/migration.git && cd migration
 ```
 
 ### Configure Marzneshin

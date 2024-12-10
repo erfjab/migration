@@ -27,7 +27,7 @@ pip install uv
 3. **Download and Run**:
 
 ```bash
-cd && git clone https://github.com/erfjab/migration.git && cd migration && git checkout ref && uv sync &&  uv run app/export/export.py
+cd && git clone https://github.com/erfjab/migration.git && cd migration && uv sync &&  uv run app/export/export.py
 ```
 
 4. **Save marzban.json file your pc**

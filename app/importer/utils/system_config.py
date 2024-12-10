@@ -47,7 +47,6 @@ class SystemConfig:
             MARZBAN_USERS_DATA=config(
                 "MARZBAN_USERS_DATA", default="marzban.json", cast=str
             ),
-            USERNAME_SUFFIX=config("USERNAME_SUFFIX", default=2, cast=int)
         )
 
     @staticmethod
@@ -86,10 +85,8 @@ class ConfigData:
         MARZNESHIN_PASSWORD: str,
         MARZNESHIN_ADDRESS: str,
         MARZBAN_USERS_DATA: str,
-        USERNAME_SUFFIX: int
     ):
         self.MARZNESHIN_USERNAME = MARZNESHIN_USERNAME
         self.MARZNESHIN_PASSWORD = MARZNESHIN_PASSWORD
         self.MARZNESHIN_ADDRESS = MARZNESHIN_ADDRESS
         self.MARZBAN_USERS_DATA = MARZBAN_USERS_DATA
-        self.USERNAME_SUFFIX = USERNAME_SUFFIX

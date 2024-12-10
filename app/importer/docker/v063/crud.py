@@ -6,7 +6,7 @@ from enum import Enum
 from types import NoneType
 from typing import List, Optional, Tuple, Union
 
-from sqlalchemy import and_, delete, update, select, func, cast, Date
+from sqlalchemy import and_, update, select, func, cast, Date
 from sqlalchemy.orm import Session
 
 from app.db.models import (
@@ -94,9 +94,7 @@ def ensure_node_inbounds(db: Session, inbounds: List[Inbound], node_id: int):
         if inb.tag in current_tags:
             stmt = (
                 update(Inbound)
-                .where(
-                    and_(Inbound.node_id == node_id, Inbound.tag == inb.tag)
-                )
+                .where(and_(Inbound.node_id == node_id, Inbound.tag == inb.tag))
                 .values(
                     protocol=json.loads(inb.config)["protocol"],
                     config=inb.config,
@@ -132,7 +130,7 @@ def get_node_users(
         .join(Inbound.services)
         .join(Service.users)
         .filter(Inbound.node_id == node_id)
-        .filter(User.activated == True)
+        .filter(User.activated is True)
     )
     return query.all()
 
@@ -150,11 +148,7 @@ def get_user_hosts(db: Session, user_id: int):
 
 
 def get_inbound_hosts(db: Session, inbound_id: int) -> List[InboundHost]:
-    return (
-        db.query(InboundHost)
-        .filter(InboundHost.inbound_id == inbound_id)
-        .all()
-    )
+    return db.query(InboundHost).filter(InboundHost.inbound_id == inbound_id).all()
 
 
 def get_all_inbounds(db: Session):
@@ -255,16 +249,14 @@ def get_users(
     sort: Optional[List[UsersSortingOptions]] = None,
     admin: Optional[Admin] = None,
     reset_strategy: Optional[Union[UserDataUsageResetStrategy, list]] = None,
-    expire_strategy: (
-        UserExpireStrategy | list[UserExpireStrategy] | None
-    ) = None,
+    expire_strategy: (UserExpireStrategy | list[UserExpireStrategy] | None) = None,
     is_active: bool | None = None,
     activated: bool | None = None,
     expired: bool | None = None,
     data_limit_reached: bool | None = None,
     enabled: bool | None = None,
 ) -> Union[List[User], Tuple[List[User], int]]:
-    query = db.query(User).filter(User.removed == False)
+    query = db.query(User).filter(User.removed is False)
 
     if usernames:
         if len(usernames) == 1:
@@ -274,13 +266,9 @@ def get_users(
 
     if reset_strategy:
         if isinstance(reset_strategy, list):
-            query = query.filter(
-                User.data_limit_reset_strategy.in_(reset_strategy)
-            )
+            query = query.filter(User.data_limit_reset_strategy.in_(reset_strategy))
         else:
-            query = query.filter(
-                User.data_limit_reset_strategy == reset_strategy
-            )
+            query = query.filter(User.data_limit_reset_strategy == reset_strategy)
 
     if expire_strategy:
         if isinstance(expire_strategy, list):
@@ -349,14 +337,10 @@ def get_user_total_usage(
             ).timestamp()
             usages[timestamp] += int(used_traffic)
         else:
-            usages[date.replace(tzinfo=timezone.utc).timestamp()] += int(
-                used_traffic
-            )
+            usages[date.replace(tzinfo=timezone.utc).timestamp()] += int(used_traffic)
 
     result = TrafficUsageSeries(usages=[])
-    current = start.astimezone(timezone.utc).replace(
-        minute=0, second=0, microsecond=0
-    )
+    current = start.astimezone(timezone.utc).replace(minute=0, second=0, microsecond=0)
     if per_day:
         current = current.replace(hour=0)
 
@@ -377,9 +361,7 @@ def get_total_usages(
     usages = defaultdict(int)
 
     query = (
-        db.query(
-            NodeUserUsage.created_at, func.sum(NodeUserUsage.used_traffic)
-        )
+        db.query(NodeUserUsage.created_at, func.sum(NodeUserUsage.used_traffic))
         .group_by(NodeUserUsage.created_at)
         .filter(
             and_(
@@ -403,9 +385,7 @@ def get_total_usages(
         usages[timestamp] += int(used_traffic)
 
     result = TrafficUsageSeries(usages=[], total=0)
-    current = start.astimezone(timezone.utc).replace(
-        minute=0, second=0, microsecond=0
-    )
+    current = start.astimezone(timezone.utc).replace(minute=0, second=0, microsecond=0)
 
     while current <= end.replace(tzinfo=timezone.utc):
         usage = usages.get(current.timestamp()) or 0
@@ -438,9 +418,7 @@ def get_user_usages(
     nodes = db.query(Node).where(Node.id.in_(node_ids))
     node_id_names = {node.id: node.name for node in nodes}
 
-    result = UserUsageSeriesResponse(
-        username=db_user.username, node_usages=[], total=0
-    )
+    result = UserUsageSeriesResponse(username=db_user.username, node_usages=[], total=0)
 
     for node_id, rows in usages.items():
         node_usages = UserNodeUsageSeries(
@@ -470,7 +448,7 @@ def get_users_count(
     expired: bool | None = None,
     data_limit_reached: bool | None = None,
 ):
-    query = db.query(User.id).filter(User.removed == False)
+    query = db.query(User.id).filter(User.removed is False)
     if admin:
         query = query.filter(User.admin_id == admin.id)
     if is_active:
@@ -576,15 +554,11 @@ def update_user(
 
     if modify.service_ids is not None:
         if allowed_services is not None:
-            service_ids = [
-                sid for sid in modify.service_ids if sid in allowed_services
-            ]
+            service_ids = [sid for sid in modify.service_ids if sid in allowed_services]
         else:
             service_ids = modify.service_ids
 
-        dbuser.services = (
-            db.query(Service).filter(Service.id.in_(service_ids)).all()
-        )
+        dbuser.services = db.query(Service).filter(Service.id.in_(service_ids)).all()
     dbuser.edit_at = datetime.utcnow()
 
     db.commit()
@@ -671,9 +645,7 @@ def create_admin(db: Session, admin: AdminCreate):
         enabled=admin.enabled,
         all_services_access=admin.all_services_access,
         modify_users_access=admin.modify_users_access,
-        services=db.query(Service)
-        .filter(Service.id.in_(admin.service_ids))
-        .all(),
+        services=db.query(Service).filter(Service.id.in_(admin.service_ids)).all(),
         subscription_url_prefix=admin.subscription_url_prefix,
     )
     db.add(dbadmin)
@@ -682,9 +654,7 @@ def create_admin(db: Session, admin: AdminCreate):
     return dbadmin
 
 
-def update_admin(
-    db: Session, dbadmin: Admin, modifications: AdminPartialModify
-):
+def update_admin(db: Session, dbadmin: Admin, modifications: AdminPartialModify):
     for attribute in [
         "is_sudo",
         "hashed_password",
@@ -699,9 +669,7 @@ def update_admin(
                 dbadmin.password_reset_at = datetime.utcnow()
     if isinstance(modifications.service_ids, list):
         dbadmin.services = (
-            db.query(Service)
-            .filter(Service.id.in_(modifications.service_ids))
-            .all()
+            db.query(Service).filter(Service.id.in_(modifications.service_ids)).all()
         )
     db.commit()
     db.refresh(dbadmin)
@@ -750,9 +718,7 @@ def get_admins(
 def create_service(db: Session, service: ServiceCreate) -> Service:
     dbservice = Service(
         name=service.name,
-        inbounds=db.query(Inbound)
-        .filter(Inbound.id.in_(service.inbound_ids))
-        .all(),
+        inbounds=db.query(Inbound).filter(Inbound.id.in_(service.inbound_ids)).all(),
         users=[],
     )
     db.add(dbservice)
@@ -769,17 +735,13 @@ def get_services(db: Session) -> List[Service]:
     return db.query(Service).all()
 
 
-def update_service(
-    db: Session, db_service: Service, modification: ServiceModify
-):
+def update_service(db: Session, db_service: Service, modification: ServiceModify):
     if modification.name is not None:
         db_service.name = modification.name
 
     if modification.inbound_ids is not None:
         db_service.inbounds = (
-            db.query(Inbound)
-            .filter(Inbound.id.in_(modification.inbound_ids))
-            .all()
+            db.query(Inbound).filter(Inbound.id.in_(modification.inbound_ids)).all()
         )
 
     db.commit()
@@ -826,9 +788,7 @@ def get_node_usage(
     usages = defaultdict(int)
 
     query = (
-        db.query(
-            NodeUserUsage.created_at, func.sum(NodeUserUsage.used_traffic)
-        )
+        db.query(NodeUserUsage.created_at, func.sum(NodeUserUsage.used_traffic))
         .group_by(NodeUserUsage.created_at)
         .filter(
             and_(
@@ -840,14 +800,10 @@ def get_node_usage(
     )
 
     for created_at, used_traffic in query.all():
-        usages[created_at.replace(tzinfo=timezone.utc).timestamp()] += int(
-            used_traffic
-        )
+        usages[created_at.replace(tzinfo=timezone.utc).timestamp()] += int(used_traffic)
 
     result = TrafficUsageSeries(usages=[], total=0)
-    current = start.astimezone(timezone.utc).replace(
-        minute=0, second=0, microsecond=0
-    )
+    current = start.astimezone(timezone.utc).replace(minute=0, second=0, microsecond=0)
 
     while current <= end.replace(tzinfo=timezone.utc):
         usage = usages.get(current.timestamp()) or 0
