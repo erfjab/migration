@@ -30,5 +30,12 @@ pip install uv
 cd && git clone https://github.com/erfjab/migration.git && cd migration && git checkout ref && uv sync &&  uv run app/export/export.py
 ```
 
+4. **Save marzban.json file your pc**
 
 This will generate a `marzban.json` file with the exported data. For the next step, upload this file to the `/root/import` directory.
+
+5. **Delete Files**
+
+```bash
+rm -rf /root/migration
+```

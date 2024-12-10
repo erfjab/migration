@@ -5,5 +5,9 @@ description = "A tool to migrate from Marzban to Marzneshin in three simple step
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "httpx==0.27.0",
+    "pydantic==2.8.2",
     "pymysql==1.1.1",
+    "python-decouple==3.8",
+    "pytz==2024.1",
 ]
