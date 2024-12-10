@@ -15,7 +15,11 @@ async def main():
         return None
 
     logger.info("🚀 Starting Marzneshin Migration Import process...")
-    admins, users_by_admin = helpers.parse_marzban_data("marzban.json")
+    admins, users_by_admin = helpers.parse_marzban_data()
+    if not admins or not users_by_admin:
+        logger.error("Failed to read marzban.json")
+        return None
+
     services_by_admin = defaultdict(list)
 
     async with MarzneshinClient() as api:

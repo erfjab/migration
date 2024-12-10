@@ -24,7 +24,7 @@ pip install uv
 3. **Download the Import Tool**:
 
 ```bash
-    cd && git clone https://github.com/erfjab/migration.git && cd migration && git checkout ref
+cd && git clone https://github.com/erfjab/migration.git && cd migration && git checkout ref
 ```
 
 ### Configure Marzneshin
@@ -74,6 +74,7 @@ Add environment details for the import, creating a new sudo admin account. Ensur
 MARZNESHIN_USERNAME="sudo_user"
 MARZNESHIN_PASSWORD="sudo_pass"
 MARZNESHIN_ADDRESS="https://sub.domain.com:port"
+MARZBAN_USERS_DATA="marzban.json"
 ```
 
 2. **Run Project**

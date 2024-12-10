@@ -88,5 +88,5 @@ class MarzUserData(BaseModel):
     on_hold_expire_duration: Optional[int]
     auto_delete_in_days: Optional[int]
     last_status_change: Optional[datetime]
-    uuid : str
-    proxy_type: ProxyType
+    uuid: str | None
+    proxy_type: ProxyType | None
