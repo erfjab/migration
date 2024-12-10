@@ -1,8 +1,8 @@
 import asyncio
 import secrets
 
-from .utils import helpers, logger, config, MarzneshinClient
-from .models import ServiceCreate, AdminCreate, AdminUpdate
+from app.import_.utils import helpers, logger, config, MarzneshinClient
+from app.import_.models import ServiceCreate, AdminCreate, AdminUpdate
 from collections import defaultdict
 
 

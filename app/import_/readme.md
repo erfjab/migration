@@ -40,8 +40,8 @@ nano /etc/opt/marzneshin/docker-compose.yml
 ```yaml
     volumes:
       - /var/lib/marzneshin:/var/lib/marzneshin
-      - /root/import/docker/v062/user.py:/app/app/models/user.py
-      - /root/import/docker/v062/crud.py:/app/app/db/crud.py
+      - /root/migration/app/import_/docker/v062/user.py:/app/app/models/user.py
+      - /root/migration/app/import_/docker/v062/crud.py:/app/app/db/crud.py
 ```
 
 
@@ -50,8 +50,8 @@ nano /etc/opt/marzneshin/docker-compose.yml
 ```yaml
     volumes:
       - /var/lib/marzneshin:/var/lib/marzneshin
-      - /root/import/docker/v063/user.py:/app/app/models/user.py
-      - /root/import/docker/v063/crud.py:/app/app/db/crud.py
+      - /root/migration/app/import_/docker/v063/user.py:/app/app/models/user.py
+      - /root/migration/app/import_/docker/v063/crud.py:/app/app/db/crud.py
 ```
 
 Restart Marzneshin to apply changes:
@@ -79,7 +79,7 @@ marzneshin restart
 
 2. **Run Project**
    ```bash
-    cd /root/migration && uv sync &&  uv run app/import/import.py
+    cd /root/migration && uv sync &&  uv run app/import_/import.py
    ```
 
 3. **Save exceptions.json file to your pc**
