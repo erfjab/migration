@@ -40,8 +40,8 @@ nano /etc/opt/marzneshin/docker-compose.yml
 ```yaml
     volumes:
       - /var/lib/marzneshin:/var/lib/marzneshin
-      - /root/migration/app/import_/docker/v062/user.py:/app/app/models/user.py
-      - /root/migration/app/import_/docker/v062/crud.py:/app/app/db/crud.py
+      - /root/migration/app/importer/docker/v062/user.py:/app/app/models/user.py
+      - /root/migration/app/importer/docker/v062/crud.py:/app/app/db/crud.py
 ```
 
 
@@ -50,8 +50,8 @@ nano /etc/opt/marzneshin/docker-compose.yml
 ```yaml
     volumes:
       - /var/lib/marzneshin:/var/lib/marzneshin
-      - /root/migration/app/import_/docker/v063/user.py:/app/app/models/user.py
-      - /root/migration/app/import_/docker/v063/crud.py:/app/app/db/crud.py
+      - /root/migration/app/importer/docker/v063/user.py:/app/app/models/user.py
+      - /root/migration/app/importer/docker/v063/crud.py:/app/app/db/crud.py
 ```
 
 Restart Marzneshin to apply changes:
@@ -63,24 +63,23 @@ marzneshin restart
 ### Configure Import
 
 1. **Edit the Environment File**:
-   ```bash
-   cd /root/
-   nano .env
-   ```
 
-   Add environment details for the import, creating a new sudo admin account. Ensure this username is unique:
+```bash
+cd /root/migration && nano .env
+```
 
-   ```
-   MARZNESHIN_USERNAME="sudo_user"
-   MARZNESHIN_PASSWORD="sudo_pass"
-   MARZNESHIN_ADDRESS="https://sub.domain.com:port"
-   MARZBAN_USERS_DATA="marzban.json"
-   ```
+Add environment details for the import, creating a new sudo admin account. Ensure this username is unique:
+
+```
+MARZNESHIN_USERNAME="sudo_user"
+MARZNESHIN_PASSWORD="sudo_pass"
+MARZNESHIN_ADDRESS="https://sub.domain.com:port"
+```
 
 2. **Run Project**
-   ```bash
-    cd /root/migration && uv sync &&  uv run app/import_/import.py
-   ```
+```bash
+cd /root/migration && uv sync &&  uv run import.py
+```
 
 3. **Save exceptions.json file to your pc**
 

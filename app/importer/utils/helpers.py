@@ -20,8 +20,8 @@ def get_exceptions_list():
         usernames = json.load(file)
     return usernames
 
-def find_duplicates(l):
-    lowercase_usernames = list(map(str.lower, l))
+def find_duplicates(username: str):
+    lowercase_usernames = list(map(str.lower, username))
     duplicates = [item for item in lowercase_usernames if lowercase_usernames.count(item) > 1]
     return list(set(duplicates))
 
@@ -52,8 +52,10 @@ def make_exceptions_list(json_file: str | Path = config.MARZBAN_USERS_DATA):
 
         with open("exceptions.json", "w") as file:
             json.dump(exceptions, file)      
+        return True
     except Exception as e:
         logger.error(e)
+    return False
 
 def gen_key(uuid : str)-> str:
     stripped = uuid.strip('"')
