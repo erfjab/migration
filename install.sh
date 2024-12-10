@@ -74,6 +74,7 @@ check_system_dependencies() {
 
 # Check for missing pip dependencies and install them
 check_pip_dependencies() {
+    export PIP_BREAK_SYSTEM_PACKAGES=1
     for package in "${PIP_DEPENDENCIES[@]}"; do
         if ! python3 -c "import $package" &>/dev/null; then
             log "Installing missing pip dependency: $package"
@@ -92,7 +93,7 @@ check_dependencies() {
 
 check_and_setup_env() {
     if [[ ! -f "$ENV_FILE" ]]; then
-        cp $INSTALL_DIR/$SCRIPT_NAME/.env.example $ENV_FILE
+        cp $INSTALL_DIR/$SCRIPT_NAME/app/handler/.env.example $ENV_FILE
         nano $ENV_FILE
     else
         log ".env file already exists."

@@ -3,9 +3,9 @@ import re
 import hashlib
 
 from fastapi import APIRouter, HTTPException, status, Request, Response
-from utils.log import logger
-from utils import auth, panel
-from utils.config import MARZBAN_XRAY_SUBSCRIPTION_PATH, USERNAME_SUFFIX
+from ..utils.log import logger
+from ..utils import auth, panel
+from ..utils.config import MARZBAN_XRAY_SUBSCRIPTION_PATH
 
 router = APIRouter(tags=["Subscription"], prefix=f"/{MARZBAN_XRAY_SUBSCRIPTION_PATH}")
 
@@ -18,9 +18,14 @@ async def upsert_user(request: Request, token: str):
         raise HTTPException(status_code=400, detail="Invalid subscription token")
 
     username = sub.username
-    clean = re.sub(r"[^\w]", "", username.lower())
-    hash_str = str(int(hashlib.md5(username.encode()).hexdigest(), 16) % (10 ** USERNAME_SUFFIX)).zfill(USERNAME_SUFFIX)
-    username = f"{clean}_{hash_str}"[:32]
+    if username in panel.get_exceptions_list():
+        clean = re.sub(r"[^\w]", "", username.lower())
+        hash_str = str(
+            int(hashlib.md5(username.encode()).hexdigest(), 16) % 10000
+        ).zfill(4)
+        username = f"{clean}_{hash_str}"[:32]
+    else:
+        username = (username.lower()).replace("-", "_")
 
     dbuser = await panel.get_user(username)
     if not dbuser or dbuser.created_at > sub.created_at:

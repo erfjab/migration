@@ -2,9 +2,9 @@
 
 A tool to migrate from **Marzban** to **Marzneshin** in three simple steps:
 
-1. [Data Export](./doc/export.md)
-2. [Data Import](./doc/import.md)
-3. [Subscription Handling](./doc/handler.md)
+1. [Data Export](app/export/readme.md)
+2. [Data Import](app/importer/readme.md)
+3. [Subscription Handling](app/handler/readme.md)
 
 > **Note:** Our intention is not to disrespect the hard work of anyone. This project is designed for individuals who, for any reason, need to migrate. I appreciate the efforts of both the Marzban and Marzneshin teams and wish them success. 🤝
 

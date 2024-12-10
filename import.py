@@ -1,14 +1,25 @@
 import asyncio
 import secrets
 
-from utils import helpers, logger, config, MarzneshinClient
-from models import ServiceCreate, AdminCreate, AdminUpdate
+from pathlib import Path
+from app.importer.utils import helpers, logger, config, MarzneshinClient
+from app.importer.models import ServiceCreate, AdminCreate, AdminUpdate
 from collections import defaultdict
 
 
 async def main():
+    file_path = Path("marzban.json")
+
+    if not file_path.exists():
+        logger.error(f"Marzban data file not found at: {file_path}")
+        return None
+
     logger.info("🚀 Starting Marzneshin Migration Import process...")
     admins, users_by_admin = helpers.parse_marzban_data()
+    if not admins or not users_by_admin:
+        logger.error("Failed to read marzban.json")
+        return None
+
     services_by_admin = defaultdict(list)
 
     async with MarzneshinClient() as api:
@@ -139,4 +150,8 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    action = helpers.make_exceptions_list("marzban.json")
+    if not action:
+        logger.error("Failed to make exceptions list")
+    else:
+        asyncio.run(main())

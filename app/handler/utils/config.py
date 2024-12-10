@@ -10,7 +10,6 @@ def check_required_settings():
         "MARZNESHIN_ADDRESS": MARZNESHIN_ADDRESS,
         "MARZBAN_JWT_TOKEN": MARZBAN_JWT_TOKEN,
         "MARZBAN_XRAY_SUBSCRIPTION_PATH": MARZBAN_XRAY_SUBSCRIPTION_PATH,
-        "USERNAME_SUFFIX": USERNAME_SUFFIX
     }
 
     # Address pattern: Supports https://domain:port or http://ip:port
@@ -50,4 +49,3 @@ MARZBAN_JWT_TOKEN = config("MARZBAN_JWT_TOKEN", default="", cast=str)
 MARZBAN_XRAY_SUBSCRIPTION_PATH = config(
     "MARZBAN_XRAY_SUBSCRIPTION_PATH", default="", cast=str
 )
-USERNAME_SUFFIX = config("USERNAME_SUFFIX", default=2, cast=int)

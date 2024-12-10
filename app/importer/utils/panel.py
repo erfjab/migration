@@ -1,9 +1,10 @@
 from typing import Optional, TypeVar, Type
+
 import httpx
 from pydantic import BaseModel
 
-from utils import logger, config
-from models import (
+from . import logger, config
+from ..models import (
     AdminCreate,
     AdminData,
     AdminToken,

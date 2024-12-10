@@ -1,4 +1,6 @@
 import httpx
+import json
+from functools import lru_cache
 from utils.log import logger
 from models import UserResponse
 from db import TokenManager
@@ -37,3 +39,10 @@ async def get_user(username: str) -> UserResponse:
     except Exception as e:
         logger.error(f"Error get user {str(e)}")
         return None
+
+
+@lru_cache(maxsize=1)
+def get_exceptions_list():
+    with open("exceptions.json", "r") as file:
+        usernames = json.load(file)
+    return usernames
