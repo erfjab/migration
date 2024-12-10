@@ -2,9 +2,9 @@ from base64 import b64decode, b64encode
 from datetime import datetime
 from hashlib import sha256
 from typing import Union
-from utils.config import MARZBAN_JWT_TOKEN
+from ..utils.config import MARZBAN_JWT_TOKEN
 from jose import JWTError, jwt
-from models import MarzbanToken
+from ..models import MarzbanToken
 
 
 def get_subscription_payload(

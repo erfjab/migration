@@ -1,6 +1,6 @@
 from sqlalchemy.future import select
 from db import Token, GetDB
-from models import TokenUpsert, TokenData
+from ..models import TokenUpsert, TokenData
 
 
 class TokenManager:

@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import Integer, DateTime, String, func
 from sqlalchemy.orm import Mapped, mapped_column
-from db import Base
+from ..db import Base
 
 
 class Token(Base):
