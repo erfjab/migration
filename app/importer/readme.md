@@ -45,7 +45,7 @@ nano /etc/opt/marzneshin/docker-compose.yml
 ```
 
 
-**for v0.6.3:**
+**for v0.6.3 to v0.6.4:**
 
 ```yaml
     volumes:
