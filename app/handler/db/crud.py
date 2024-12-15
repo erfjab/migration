@@ -1,5 +1,5 @@
 from sqlalchemy.future import select
-from db import Token, GetDB
+from ..db import Token, GetDB
 from ..models import TokenUpsert, TokenData
 
 
