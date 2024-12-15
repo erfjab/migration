@@ -134,7 +134,6 @@ async def main():
 
                     try:
                         new_user = helpers.parse_marz_user(user, admin_service)
-                        logger.debug(f"Data for {user.username}: {new_user.dict()}")
                         created_user = await api.create_user(new_user)
                         if not created_user:
                             logger.error(f"Failed to create user: {user.username}")
