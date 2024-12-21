@@ -37,6 +37,12 @@ The above steps will:
 4. **Create and Enable Service**: Register `migration` as a system service.
 5. **Launch the Bot**: Start the bot, which will run continuously in the background.
 
+## Export JWT secretkey
+
+```bash
+grep -o '"secret_key": *"[^"]*"' marzban.json | sed -E 's/.*"secret_key": *"([^"]*)"/\1/'  
+```
+
 ## Usage
 
 After installation, you can manage the `migration` bot using the following commands:
