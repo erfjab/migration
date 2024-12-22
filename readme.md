@@ -1,3 +1,6 @@
+[![Watch the video](https://img.youtube.com/vi/YvYprFfabM8/maxresdefault.jpg)](https://www.youtube.com/watch?v=YvYprFfabM8)
+
+
 # Migration Tool
 
 A tool to migrate from **Marzban** to **Marzneshin** in three simple steps:
