@@ -28,9 +28,14 @@ async def upsert_user(request: Request, token: str):
         username = (username.lower()).replace("-", "_")
 
     dbuser = await panel.get_user(username)
-    if not dbuser or dbuser.created_at > sub.created_at:
+    if not dbuser:
         raise HTTPException(
-            status_code=404, detail="User not found or invalid creation date"
+            status_code=404, detail="User not found"
+        )
+    
+    if dbuser.created_at > sub.created_at:
+        raise HTTPException(
+            status_code=404, detail="invalid creation date"
         )
 
     if dbuser.sub_revoked_at and dbuser.sub_revoked_at > sub.created_at:
