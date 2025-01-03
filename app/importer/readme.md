@@ -54,6 +54,16 @@ nano /etc/opt/marzneshin/docker-compose.yml
       - /root/migration/app/importer/docker/v063/crud.py:/app/app/db/crud.py
 ```
 
+**for v0.7.0:**
+
+```yaml
+    volumes:
+      - /var/lib/marzneshin:/var/lib/marzneshin
+      - /root/migration/app/importer/docker/v070/user.py:/app/app/models/user.py
+      - /root/migration/app/importer/docker/v070/crud.py:/app/app/db/crud.py
+```
+
+
 Restart Marzneshin to apply changes:
 
 ```bash
