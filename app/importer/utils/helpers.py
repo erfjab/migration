@@ -68,6 +68,32 @@ def gen_key(uuid: str) -> str:
     stripped = uuid.strip('"')
     return stripped.replace("-", "")
 
+def MarzeUSERDATA_parse_args(users):
+    output = []
+    for user in users:
+        _user = MarzUserData(id=user.get('id',None),
+                             username=user.get('username',None),
+                             status=user.get('status',None),
+                             used_traffic=user.get('used_traffic',None),
+                             data_limit=user.get('data_limit',None),
+                             expire=user.get('expire',None),
+                             created_at=user.get('created_at',None),
+                             admin_id=user.get('admin_id',None),
+                             data_limit_reset_strategy=user.get('data_limit_reset_strategy',None),
+                             sub_revoked_at=user.get('sub_revoked_at',None),
+                             note=user.get('note',None),
+                             sub_updated_at=user.get('sub_updated_at',None),
+                             sub_last_user_agent=user.get('sub_last_user_agent',None),
+                             online_at=user.get('online_at',None),
+                             edit_at=user.get('edit_at',None),
+                             on_hold_timeout=user.get('on_hold_timeout',None),
+                             on_hold_expire_duration=user.get('on_hold_expire_duration',None),
+                             auto_delete_in_days=user.get('auto_delete_in_days',None),
+                             last_status_change=user.get('last_status_change',None),
+                             uuid=user.get('uuid',None),
+                             proxy_type=user.get('proxy_type',None))
+        output.append(_user)
+    return output
 
 def parse_marzban_data(
     json_file: str | Path = config.MARZBAN_USERS_DATA,
@@ -101,7 +127,7 @@ def parse_marzban_data(
         admin_map = {admin.id: admin.username for admin in admins}
 
         users_by_admin = defaultdict(list)
-        for user in [MarzUserData(**user) for user in data["users"]]:
+        for user in MarzeUSERDATA_parse_args(data["users"]):
             users_by_admin[admin_map.get(user.admin_id, "bear")].append(user)
 
         users_by_admin = dict(users_by_admin)
